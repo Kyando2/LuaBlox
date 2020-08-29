@@ -1,6 +1,6 @@
-clientHandler = require 'LuaBlox.client'
+Client = require 'LuaBlox.client'
 
-client = clientHandler:new()
+client = Client()
 
 auth = "" -- Your token here
 client:connect(auth)

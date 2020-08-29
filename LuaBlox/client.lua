@@ -3,10 +3,8 @@ local http = require 'socket.http'
 local https = require 'ssl.https'
 -- JSON decoder
 json = require 'LuaBlox.json'
-
-Client = {};
-Client.__index = Client
-setmetatable(Client, {})
+local BaseClass = require('LuaBlox.baseclass')
+local Client = require('LuaBlox.class')('Client', BaseClass)
 local regex = "Roblox.XsrfToken.setToken\%('(.+)'%)"
 
 -- Local meth
@@ -91,13 +89,10 @@ end
 
 -- Public meth
 
-function Client:new(options)
-    opt = options or {}
-	obj = opt.o or {}
-    setmetatable(obj, self)
-    obj.headers = {}
-	obj.cookies = {}
-    return obj
+function Client:__init(options)
+    self.cookies = {}
+    self.headers = {}
+    return self
 end
 
 function Client:connect(authCookie)
@@ -105,6 +100,5 @@ function Client:connect(authCookie)
 
     self:verifyConnection()
 end
-
 
 return Client
