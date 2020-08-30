@@ -16,17 +16,17 @@ function Player:__init(options)
 end
 
 function Player:fetchName()
-	local prom = self.client:reqwest{
+	local rsp = self.client:reqwest{
 		url = endpoints.username .. self.id
 	}
-	x, y = prom:getResult()
-	self._username = json.decode(x[1]).Username
-	self.cache:add("Username", self._username)
-	return self._username
+	x, y = rsp:catch("There was an error with the request")
+	local _username = json.decode(x[1]).Username
+	self.cache:add("Username", _username)
+	return _username
 end
 
 function get.username(self)
-	if self._username then return self._username 
+	if self.cache:get("Username") then return self.cache:get("Username")
 	else return self:fetchName() end
 end
 

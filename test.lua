@@ -1,9 +1,13 @@
-Client = require 'LuaBlox.client'
+local Client = require 'LuaBlox.client'
+local auth = require 'secret'
 
-client = Client()
+local client = Client()
 
-auth = ""
 client:connect(auth)
 
-player = client:getPlayer("182262920")
+local player = client:getPlayer("182262920")
+
+print(player.username)
+
+print(player.username)
 

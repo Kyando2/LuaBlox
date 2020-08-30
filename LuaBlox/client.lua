@@ -6,7 +6,7 @@ local https = require 'ssl.https'
 -- Local
 local json = require(here .. 'json')
 local BaseClass = require(here ..'baseclass')
-local Promise = require(here .. 'promise')
+local Response = require(here .. 'response')
 local Player = require(here .. 'player')
 local Client = require(here ..'class')('Client', BaseClass)
 local regex = "Roblox.XsrfToken.setToken\%('(.+)'%)"
@@ -23,10 +23,10 @@ end
 
 function Client:updateCSRFToken()
     -- X-CSRFToken
-    local somePromise = self:reqwest {
+    local resp = self:reqwest {
         url = 'https://roblox.com/home',
 	}
-    resp, headers = somePromise:getResult()
+    resp, headers = resp:catch("There was an error executing this request")
     local CSRFToken = string.match(table.concat(resp), regex)
     local target = string.byte("'")
     local num = 0 
@@ -98,7 +98,7 @@ function Client:reqwest(options)
     options.headers = self.headers or options.headers
     local coro = coroutine.create(request)
     resume(coro, options)
-    return Promise{coro= coro}
+    return Response{coro = coro}
 end
 
 -- Public meth

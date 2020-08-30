@@ -4,7 +4,7 @@ here = here:gsub("Cache", "")
 local BaseClass = require(here ..'baseclass')
 local Cache = require(here .. 'class')("Cache", BaseClass)
 
-function Cache:__init(options)
+function Cache.__init(self, options)
 	self.data = {}
 	return self
 end
@@ -19,8 +19,9 @@ function Cache:hide(k)
 end
 
 function Cache:get(k)
-	if self.data[k] then
-		if self.data[k][2] == false then
+	local data = self.data
+	if data[k] then
+		if data[k][2] == false then
 			return data[k][1]
 		end
 	end

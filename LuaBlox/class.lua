@@ -115,8 +115,10 @@ return setmetatable({},
 
 		]]--
 		function class:__index(k)
-			if rawget(class, "INDEX") then return rawget(class, "INDEX")(self, k) end
-			if inherited["INDEX"] then return inherited.INDEX(self, k) end
+			if k ~= "__init" then
+				if rawget(class, "INDEX") then return rawget(class, "INDEX")(self, k) end
+				if inherited["INDEX"] then return inherited.INDEX(self, k) end
+			end
 			if getter[k] then return getter[k](self) end
 			if dict[k] ~= nil then
 				return dict[k]
@@ -128,7 +130,16 @@ return setmetatable({},
 			return nil
 		end
 
+		--[[
+		**NEWINDEX**
+
+		Adding an NEWINDEX method to your class will overpower the default implementation below
+		and automatically get called by __newindex
+
+		]]--
 		function class:__newindex(k, v)
+			if rawget(class, "NEWINDEX") then return rawget(class, "NEWINDEX")(self, k) end
+			if inherited["NEWINDEX"] then return inherited.NEWINDEX(self, k) end
 			dict[k] = v
 		end
 		--[[
