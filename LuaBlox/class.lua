@@ -72,6 +72,14 @@ return setmetatable({},
 			Inherited attributes are attributes that are inherited from the parent
 			They are always the last ones to be fetched
 
+		ADDED:
+			Added attributes are attributes taht are added after the initialization of the class
+			They are always the second ones fetched when searching for an attribute
+
+		GETTER:
+			Functions that have been added to the getter dictionary returned from this module
+			They are the first one fetched when searching an attribute and are automatically called
+			with the cls attribute
 
 		]]--
 		local class = setmetatable({}, metadata)
@@ -99,7 +107,13 @@ return setmetatable({},
 				end
 			end
 		end
+		--[[
+		**INDEX**
 
+		Adding an INDEX method to your class will overpower the default implementation below
+		and automatically get called by __index
+
+		]]--
 		function class:__index(k)
 			if rawget(class, "INDEX") then return rawget(class, "INDEX")(self, k) end
 			if inherited["INDEX"] then return inherited.INDEX(self, k) end
