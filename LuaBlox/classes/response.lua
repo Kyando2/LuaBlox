@@ -1,20 +1,11 @@
 local here = ...
-here = here:gsub("response", "")
-
-local BaseClass = require(here ..'baseclass')
-local Response = require(here .. 'class')("Promise", BaseClass)
-
+here = here:gsub("classes/response", "")
+-- Classes
+local BaseClass = require(here ..'classes/baseclass')
+local Response = require(here .. 'classes/class')("Promise", BaseClass)
+-- Shortcut
 local resume = coroutine.resume
 
---[[
-Responses for HTTP requests (basic wrappers for coroutines)
-]]--
-function Response:__init(options) 
-	if not options.coro then return error("Must provide a coro") end
-	self.__coro = options.coro
-	self.status = "alive"
-	return self
-end
 
 -- Directly gives back the result ignoring the possibility of error
 function Response:abstract()
@@ -29,6 +20,16 @@ function Response:catch(errorMessage)
 	x, y, z = resume(self.__coro)
 	if not x then return error(errorMessage) end
 	return y, z
+end
+
+--[[
+Responses for HTTP requests (basic wrappers for coroutines)
+]]--
+function Response:__init(options) 
+	if not options.coro then return error("Must provide a coro") end
+	self.__coro = options.coro
+	self.status = "alive"
+	return self
 end
 
 return Response

@@ -1,7 +1,7 @@
-local Client = require 'LuaBlox.client'
+local LuaBlox = require 'LuaBlox'
 local auth = require 'secret'
 
-local client = Client()
+local client = LuaBlox.Client()
 
 client:connect(auth)
 

@@ -1,13 +1,8 @@
 local here = ...
-here = here:gsub("Cache", "")
-
-local BaseClass = require(here ..'baseclass')
-local Cache = require(here .. 'class')("Cache", BaseClass)
-
-function Cache.__init(self, options)
-	self.data = {}
-	return self
-end
+here = here:gsub("classes/Cache", "")
+-- Classes
+local BaseClass = require(here ..'classes/baseclass')
+local Cache = require(here .. 'classes/class')("Cache", BaseClass)
 
 function Cache:add(k, v) 
 	self.data[k] = {v, false}
@@ -25,6 +20,11 @@ function Cache:get(k)
 			return data[k][1]
 		end
 	end
+end
+
+function Cache.__init(self, options)
+	self.data = {}
+	return self
 end
 
 return Cache

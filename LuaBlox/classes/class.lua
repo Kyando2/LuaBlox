@@ -51,12 +51,33 @@ function metadata:__newindex(k, v)
 	rawset(self, k, v)
 end
 
+function inherit(child, ancestor, inherited)
+	for k1, v1 in pairs(ancestor) do
+		if not k1:startswith("__") then
+			print('Adding inherited property ' .. k1 .. ' from ancestor ' .. ancestor.__name)
+			inherited[k1] = v1
+		end
+	end
+	for k2, v2 in pairs(ancestor.__inherited) do
+		if not k2:startswith("__") then
+			print('Adding inherited property ' .. k2 .. ' from ancestor ' .. ancestor.__name)
+			inherited[k2] = v2
+		end
+	end
+	ancestors = {}
+	table.insert(ancestors, ancestor)
+	table.insert(ancestors, ancestor.__ancestors)
+	return ancestors
+end
+
 return setmetatable({},
 	{__call = 
-	function(_, name, ancestor)
+	function(_, name, ...)
 		print('\n--- Generating Class ---')
 		print(name)
-		if ancestor then print("From ancestor " .. ancestor.__name) end
+		local parents = arg
+		parents.n = nil
+
 
 		--[[
 		**ATTRIBUTE TYPES**
@@ -86,25 +107,16 @@ return setmetatable({},
 		local dict = {}
 		local inherited = {}
 		local getter = {}
+		local ancestors = {}
 		--[[
 		**INHERITANCE**
 
 		All native and inherited attributes from parent class are transfered to this class as inherited attributes
 
 		]]--
-
-		if ancestor then
-			for k1, v1 in pairs(ancestor) do
-				if not k1:startswith("__") then
-					print('Adding inherited property ' .. k1 .. ' from ancestor ' .. ancestor.__name)
-					inherited[k1] = v1
-				end
-			end
-			for k2, v2 in pairs(ancestor.__dict) do
-				if not k2:startswith("__") then
-					print('Adding inherited property ' .. k2 .. ' from ancestor ' .. ancestor.__name)
-					inherited[k2] = v2
-				end
+		if parents then
+			for _, v in pairs(parents) do
+				inherit(class, v, inherited)
 			end
 		end
 		--[[
@@ -116,8 +128,8 @@ return setmetatable({},
 		]]--
 		function class:__index(k)
 			if k ~= "__init" then
-				if rawget(class, "INDEX") then return rawget(class, "INDEX")(self, k) end
-				if inherited["INDEX"] then return inherited.INDEX(self, k) end
+				if rawget(class, "INDEX") then return rawget(class, "INDEX")(self, cls, k) end
+				if inherited["INDEX"] then return inherited.INDEX(self, cls, k) end
 			end
 			if getter[k] then return getter[k](self) end
 			if dict[k] ~= nil then
@@ -138,8 +150,8 @@ return setmetatable({},
 
 		]]--
 		function class:__newindex(k, v)
-			if rawget(class, "NEWINDEX") then return rawget(class, "NEWINDEX")(self, k) end
-			if inherited["NEWINDEX"] then return inherited.NEWINDEX(self, k) end
+			if rawget(class, "NEWINDEX") then return rawget(class, "NEWINDEX")(self, cls, k) end
+			if inherited["NEWINDEX"] then return inherited.NEWINDEX(self, cls, k) end
 			dict[k] = v
 		end
 		--[[
@@ -164,6 +176,7 @@ return setmetatable({},
 		]]--
 		class.__dict = dict
 		class.__inherited = inherited
+		class.__ancestors = ancestors
 		class.__name = name
 		--[[
 		**THE GETTER**
