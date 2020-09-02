@@ -23,6 +23,7 @@ SOFTWARE.
 
 
 local metadata = {}
+local names = {}
 local __printer = print
 
 -- Toggle for the print function
@@ -73,6 +74,7 @@ end
 return setmetatable({},
 	{__call = 
 	function(_, name, ...)
+		if names[name] ~= nil then return names[name] end -- Returns the class if it was already loaded
 		print('\n--- Generating Class ---')
 		print(name)
 		local parents = arg
@@ -191,7 +193,7 @@ return setmetatable({},
 
 		]]--
 		class.__getter = getter 
-
+		names[name] = class
 		print('------------------------\n')
 		return class, getter
 end})

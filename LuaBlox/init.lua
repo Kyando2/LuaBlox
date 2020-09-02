@@ -1,6 +1,5 @@
 local here = ...
 here = here .. "/" 
-print(here)
 
 local pub = {
 	Client = require(here .. "classes/client"),

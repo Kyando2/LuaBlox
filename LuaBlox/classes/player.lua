@@ -3,6 +3,7 @@ here = here:gsub("classes/player", "")
 -- Classes
 local BaseClass = require(here ..'classes/baseclass')
 local Cache = require(here .. 'classes/Cache')
+-- Class
 local Player, get = require(here .. 'classes/class')("Player", BaseClass, Cache)
 -- Utils
 local json = require(here .. 'utils/json')
@@ -11,7 +12,7 @@ local endpoints = require(here .. 'static/endpoints')
 
 
 function Player:_fetchName()
-	local rsp = self.client:_reqwest{
+	local rsp = self.client:_get{
 		url = endpoints.username .. self.id
 	}
 	x, y = rsp:catch("There was an error with the request")

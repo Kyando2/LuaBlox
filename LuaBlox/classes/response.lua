@@ -2,6 +2,7 @@ local here = ...
 here = here:gsub("classes/response", "")
 -- Classes
 local BaseClass = require(here ..'classes/baseclass')
+-- Class
 local Response = require(here .. 'classes/class')("Promise", BaseClass)
 -- Shortcut
 local resume = coroutine.resume

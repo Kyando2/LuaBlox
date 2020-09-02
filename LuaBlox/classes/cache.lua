@@ -1,7 +1,9 @@
 local here = ...
+here = here:gsub("classes/cache", "")
 here = here:gsub("classes/Cache", "")
 -- Classes
 local BaseClass = require(here ..'classes/baseclass')
+-- Class
 local Cache = require(here .. 'classes/class')("Cache", BaseClass)
 
 function Cache:add(k, v) 

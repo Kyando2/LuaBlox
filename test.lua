@@ -5,9 +5,9 @@ local client = LuaBlox.Client()
 
 client:connect(auth)
 
-local player = client:getPlayer("182262920")
+local group = client:getGroup(5029105)
 
-print(player.username)
+print(group.name)
 
-print(player.username)
+print(group.name)
 

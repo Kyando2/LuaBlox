@@ -4,11 +4,15 @@ here = here:gsub("classes/client", "")
 local BaseClass = require(here ..'classes/baseclass')
 local Response = require(here .. 'classes/response')
 local Player = require(here .. 'classes/player')
+local Group = require(here .. 'classes/group')
+-- Class
 local Client = require(here ..'classes/class')('Client', BaseClass)
 -- Utils
 local json = require(here .. 'utils/json')
 local utils = require(here .. 'utils/utils')
 local request = require(here .. 'utils/request')
+-- Static
+local endpoints = require(here .. 'static/endpoints')
 -- Shortcuts
 local running = coroutine.running
 local status = coroutine.status
@@ -20,7 +24,7 @@ function Client:_setHeaders(k, v)
 end
 
 function Client:_updateCSRFToken()
-    local data = self:_reqwest {
+    local data = self:_get {
         url = 'https://roblox.com/home',
 	}
     resp, headers = data:catch("There was an error executing this request")
@@ -30,7 +34,7 @@ end
 
 function Client:_verifyConnection()
     self:_updateCSRFToken()
-    local prom = self:_reqwest {
+    local prom = self:_get {
         url = 'https://friends.roblox.com/v1/my/friends/count'
         }
 end
@@ -48,12 +52,13 @@ function Client:_setCookie(k, v)
     self:_setHeaders("Cookie", table.concat(cookieList))
 end
 
-function Client:_reqwest(options)
+function Client:_get(options)
     options.headers = options.headers or self.headers
-    local coro = coroutine.create(request.request)
+    local coro = coroutine.create(request.get)
     x, y, z = resume(coro, options)
     return Response{coro = coro}
 end
+
 
 function Client:connect(authCookie)
     self:_setCookie('.ROBLOSECURITY', authCookie)
@@ -63,6 +68,10 @@ end
 
 function Client:getPlayer(id)
     return Player{id=id,client=self}
+end
+
+function Client:getGroup(id)
+    return Group{id=id, client=self}
 end
 
 function Client:__init(options)
